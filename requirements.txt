@@ -1,3 +1,9 @@
 opencv-python
 numpy
 pandas
+streamlit
+streamlit-option-menu
+pyodbc
+camera_input_live
+Pillow
+datetime
