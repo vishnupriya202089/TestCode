@@ -1,0 +1,80 @@
+import streamlit as st
+from streamlit_option_menu import option_menu
+from camera_input_live import  camera_input_live
+import pandas as pd
+import numpy as np
+import cv2
+import mysql.connector
+
+import time
+
+st.set_page_config(page_title="IoT CoE Track 'N' Trace",page_icon=":tada:",layout="wide")
+
+with st.container():
+ #st.subheader("Track and Trace Application")
+ st.title("IoT CoE Track 'N' Trace")
+
+ with  st.sidebar:
+  selected =option_menu(
+         menu_title="Stations",
+         options=("Station1 Camera","Station2 Camera","Station3 Camera"),
+  )
+
+
+cnxn_str = ("Driver={ODBC Driver 18 for SQL Server};"
+            "Server=tcp:coepocsqlserver.database.windows.net,1433;"
+            "Database=coeqrappdb;"
+            "UID=coepocadmin;"
+            "PWD={Password@123};")
+cnxn = pyodbc.connect(cnxn_str)
+
+ df = pd.DataFrame(myresult)
+
+image = camera_input_live()
+
+if selected == "Station2 Camera":
+    st.image(image)
+    bytes_data = image.getvalue()
+    cv2_img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
+
+    detector = cv2.QRCodeDetector()
+
+    data, bbox, straight_qrcode = detector.detectAndDecode(cv2_img)
+
+    if data:
+        st.write("# Found QR code")
+        st.write(data)
+
+
+
+
+if selected == "Station1 Camera":
+ #st.title(f"you have selected {selected}")
+ image = st.camera_input("Show QR code")
+
+ if image is not None:
+     bytes_data = image.getvalue()
+     cv2_img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
+
+     detector = cv2.QRCodeDetector()
+
+     data, bbox, straight_qrcode = detector.detectAndDecode(cv2_img)
+
+
+     for i in data:
+         mycursor.execute('Insert into cube_details (i ) values (%s)', data)
+         connection.commit()
+
+     col1, col2, col3 = st.columns([1, 2, 1])
+
+     # col1.markdown("# welcome to block details page")
+     col1 = st.table(df)
+
+     st.write(myresult)
+     st.write(data)
+
+
+if selected == "Station3 Camera":
+ st.title(f"you have selected {selected}")
+ image = st.camera_input("Show QR code")
+ 
